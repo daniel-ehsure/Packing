@@ -1,0 +1,8 @@
+F:\code\Packing\Packing\obj\Debug\ResolveAssemblyReference.cache
+F:\code\Packing\Packing\obj\Debug\Packing.FrmMain.resources
+F:\code\Packing\Packing\obj\Debug\Packing.Properties.Resources.resources
+F:\code\Packing\Packing\obj\Debug\Packing.csproj.GenerateResource.Cache
+F:\code\Packing\Packing\bin\Debug\Packing.exe
+F:\code\Packing\Packing\bin\Debug\Packing.pdb
+F:\code\Packing\Packing\obj\Debug\Packing.exe
+F:\code\Packing\Packing\obj\Debug\Packing.pdb
