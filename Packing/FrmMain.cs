@@ -12,13 +12,24 @@ namespace Packing
 {
     public partial class FrmMain : Form
     {
-        private AxActUtlTypeLib.AxActUtlType axActUtlType = null;
+        Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int,AxActUtlTypeLib.AxActUtlType>(2);
+        Dictionary<int, Dispatcher> dicDispatcher = new Dictionary<int, Dispatcher>(2);
+        Dictionary<int, TextBox> dicInfoBox = new Dictionary<int, TextBox>(2);
 
         public FrmMain()
         {
             InitializeComponent();
-            this.axActUtlType = new AxActUtlTypeLib.AxActUtlType();
-            this.Controls.Add(this.axActUtlType);
+
+            dicAxActUtlType.Add(1, new AxActUtlTypeLib.AxActUtlType());
+            dicAxActUtlType.Add(2, new AxActUtlTypeLib.AxActUtlType());
+
+            dicInfoBox.Add(1, txtEmp1Info);
+            dicInfoBox.Add(2, txtEmp2Info);
+
+            foreach (var item in dicAxActUtlType.Keys)
+            {
+                this.Controls.Add(dicAxActUtlType[item]);
+            }
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -42,7 +53,7 @@ namespace Packing
         /// <param name="dicPacking">包装信息</param>
         private void StartWork(Dictionary<string, List<PackingType>> dicPacking)
         {
-            Plc plc = new Plc(new Linker(), txtInfo);
+            Plc plc = new Plc(new Linker(), txtEmp1Info);
 
             foreach (var packerNo in dicPacking.Keys)
             {
@@ -58,97 +69,129 @@ namespace Packing
             Barcode.Print(bar, name);
         }
 
-        private void connect()
+        //private void connect()
+        //{
+        //    try
+        //    {
+        //        int iStation = Convert.ToInt32(this.txtStationNo.Text.Trim());
+        //        this.axActUtlType.ActLogicalStationNumber = iStation;
+        //        this.axActUtlType.ActPassword = this.txtPassword.Text.Trim();
+        //        int rtn = this.axActUtlType.Open();
+        //        if (rtn == 0)
+        //        {
+        //            ShowMsg("连接成功！");
+        //            this.txtStationNo.Enabled = false;
+        //            this.txtPassword.Enabled = false;
+        //            this.btnConn.Enabled = false;
+        //        }
+        //        else
+        //        {
+        //            ShowMsg("连接失败");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ShowMsg(ex.Message);
+        //    }
+        //}
+
+        //private void read()
+        //{
+        //    try
+        //    {
+        //        string strAddr = this.txtAddr.Text.Trim();
+        //        int num = Convert.ToInt32(this.txtNum.Text.Trim());
+        //        short[] arr = new short[num];
+
+        //        int rtn = this.axActUtlType.ReadDeviceBlock2(strAddr, num, out arr[0]);
+        //        if (rtn == 0)
+        //        {
+        //            ShowMsg("读取数据成功！");
+        //            for (int i = 0; i < arr.Length; i++)
+        //            {
+        //                ShowMsg(string.Format("{0:X4}", arr[i]));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            ShowMsg("读取数据失败");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ShowMsg(ex.Message);
+        //    }
+        //}
+
+        //private void write()
+        //{
+        //    try
+        //    {
+        //        string strAddr = this.txtAddr.Text.Trim();
+        //        string[] strData = this.txtData.Lines;
+        //        int num = strData.Length;
+        //        short[] arr = new short[num];
+        //        for (int i = 0; i < num; i++)
+        //        {
+        //            arr[i] = Convert.ToInt16(strData[i]);
+        //        }
+
+        //        int rtn = this.axActUtlType.WriteDeviceBlock2(strAddr, num, ref arr[0]);
+        //        if (rtn == 0)
+        //        {
+        //            ShowMsg("写入数据成功！");
+        //            this.txtNum.Text = num.ToString();
+        //        }
+        //        else
+        //        {
+        //            ShowMsg("写入数据失败");
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ShowMsg(ex.Message);
+        //    }
+        //}
+
+        //private void ShowMsg(string msg)
+        //{
+        //    string str = string.Format(DateTime.Now.ToString("HH:mm:ss") + "_" + msg);
+        //    this.richTextBox1.SelectionStart = this.richTextBox1.Text.Length;
+        //    this.richTextBox1.SelectedText += (str + Environment.NewLine);
+        //    this.richTextBox1.ScrollToCaret();
+        //}
+
+        private void btnEmp1Conn_Click(object sender, EventArgs e)
         {
-            try
-            {
-                int iStation = Convert.ToInt32(this.txtStationNo.Text.Trim());
-                this.axActUtlType.ActLogicalStationNumber = iStation;
-                this.axActUtlType.ActPassword = this.txtPassword.Text.Trim();
-                int rtn = this.axActUtlType.Open();
-                if (rtn == 0)
-                {
-                    ShowMsg("连接成功！");
-                    this.txtStationNo.Enabled = false;
-                    this.txtPassword.Enabled = false;
-                    this.btnConn.Enabled = false;
-                }
-                else
-                {
-                    ShowMsg("连接失败");
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowMsg(ex.Message);
-            }
+            Connect(1);
         }
 
-        private void read()
+        private void btnEmp2Conn_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string strAddr = this.txtAddr.Text.Trim();
-                int num = Convert.ToInt32(this.txtNum.Text.Trim());
-                short[] arr = new short[num];
-
-                int rtn = this.axActUtlType.ReadDeviceBlock2(strAddr, num, out arr[0]);
-                if (rtn == 0)
-                {
-                    ShowMsg("读取数据成功！");
-                    for (int i = 0; i < arr.Length; i++)
-                    {
-                        ShowMsg(string.Format("{0:X4}", arr[i]));
-                    }
-                }
-                else
-                {
-                    ShowMsg("读取数据失败");
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowMsg(ex.Message);
-            }
+            Connect(2);
         }
 
-        private void write()
+        private void Connect(int key)
         {
-            try
+            //int iStation = Convert.ToInt32(this.txtStationNo.Text.Trim());
+            //this.axActUtlType.ActLogicalStationNumber = iStation;
+            //this.axActUtlType.ActPassword = this.txtPassword.Text.Trim();
+            if (!dicDispatcher.ContainsKey(key))
             {
-                string strAddr = this.txtAddr.Text.Trim();
-                string[] strData = this.txtData.Lines;
-                int num = strData.Length;
-                short[] arr = new short[num];
-                for (int i = 0; i < num; i++)
-                {
-                    arr[i] = Convert.ToInt16(strData[i]);
-                }
-
-                int rtn = this.axActUtlType.WriteDeviceBlock2(strAddr, num, ref arr[0]);
-                if (rtn == 0)
-                {
-                    ShowMsg("写入数据成功！");
-                    this.txtNum.Text = num.ToString();
-                }
-                else
-                {
-                    ShowMsg("写入数据失败");
-                }
-
+                dicDispatcher.Add(key, new Dispatcher(dicAxActUtlType[key]));
+                dicDispatcher[key].ShowInfo = ShowInfo;
+                dicDispatcher[key].Key = key;
             }
-            catch (Exception ex)
-            {
-                ShowMsg(ex.Message);
-            }
+            dicDispatcher[key].Connect();
         }
 
-        private void ShowMsg(string msg)
+        private void ShowInfo(string info, int key)
         {
-            string str = string.Format(DateTime.Now.ToString("HH:mm:ss") + "_" + msg);
-            this.richTextBox1.SelectionStart = this.richTextBox1.Text.Length;
-            this.richTextBox1.SelectedText += (str + Environment.NewLine);
-            this.richTextBox1.ScrollToCaret();
+            string str = string.Format(DateTime.Now.ToString("HH:mm:ss") + "_" + info);
+            this.dicInfoBox[key].SelectionStart = this.dicInfoBox[key].Text.Length;
+            this.dicInfoBox[key].SelectedText += (str + Environment.NewLine);
+            this.dicInfoBox[key].ScrollToCaret();
         }
     }
 }
