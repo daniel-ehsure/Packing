@@ -32,7 +32,7 @@ namespace Packing
             OleDbConnection conn = null;
             OleDbDataAdapter da = null;
             DataTable dtSheetName = null;
-            Dictionary<string, List<PackingType>> result = new Dictionary<string, List<PackingType>>();
+            Dictionary<int, List<PackingType>> result = new Dictionary<int, List<PackingType>>();
 
             try
             {
@@ -94,13 +94,15 @@ namespace Packing
                                     }
                                 }
 
-                                if (result.ContainsKey(pt.PackerNo))
+                                int key = Int32.Parse(pt.PackerNo);
+
+                                if (result.ContainsKey(key))
                                 {
-                                    result[pt.PackerNo].Add(pt);
+                                    result[key].Add(pt);
                                 }
                                 else
                                 {
-                                    result.Add(pt.PackerNo, new List<PackingType> { pt });
+                                    result.Add(key, new List<PackingType> { pt });
                                 }
                             }
                         }

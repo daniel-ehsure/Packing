@@ -30,7 +30,6 @@
         {
             this.txtEmp1Info = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnPrint = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.gbConnInfo = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -51,40 +50,35 @@
             this.btnEmp2Start = new System.Windows.Forms.Button();
             this.btnEmp2Conn = new System.Windows.Forms.Button();
             this.txtEmp2Info = new System.Windows.Forms.TextBox();
-            this.button9 = new System.Windows.Forms.Button();
+            this.btnDebug = new System.Windows.Forms.Button();
+            this.btnQuit = new System.Windows.Forms.Button();
+            this.gbEmp1 = new System.Windows.Forms.GroupBox();
+            this.gbEmp2 = new System.Windows.Forms.GroupBox();
             this.gbConnInfo.SuspendLayout();
+            this.gbEmp1.SuspendLayout();
+            this.gbEmp2.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtEmp1Info
             // 
-            this.txtEmp1Info.Location = new System.Drawing.Point(21, 155);
+            this.txtEmp1Info.Location = new System.Drawing.Point(6, 45);
             this.txtEmp1Info.Multiline = true;
             this.txtEmp1Info.Name = "txtEmp1Info";
             this.txtEmp1Info.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtEmp1Info.Size = new System.Drawing.Size(293, 394);
+            this.txtEmp1Info.Size = new System.Drawing.Size(318, 394);
             this.txtEmp1Info.TabIndex = 5;
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // btnPrint
-            // 
-            this.btnPrint.Location = new System.Drawing.Point(616, 74);
-            this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(75, 23);
-            this.btnPrint.TabIndex = 4;
-            this.btnPrint.Text = "print";
-            this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
-            // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(697, 74);
+            this.btnOpen.Location = new System.Drawing.Point(697, 76);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 3;
-            this.btnOpen.Text = "open";
+            this.btnOpen.Text = "打开表格";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
@@ -178,10 +172,11 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "保存";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnEmp1Conn
             // 
-            this.btnEmp1Conn.Location = new System.Drawing.Point(21, 126);
+            this.btnEmp1Conn.Location = new System.Drawing.Point(6, 16);
             this.btnEmp1Conn.Name = "btnEmp1Conn";
             this.btnEmp1Conn.Size = new System.Drawing.Size(75, 23);
             this.btnEmp1Conn.TabIndex = 7;
@@ -191,61 +186,67 @@
             // 
             // btnEmp1Start
             // 
-            this.btnEmp1Start.Location = new System.Drawing.Point(102, 126);
+            this.btnEmp1Start.Location = new System.Drawing.Point(87, 16);
             this.btnEmp1Start.Name = "btnEmp1Start";
             this.btnEmp1Start.Size = new System.Drawing.Size(75, 23);
             this.btnEmp1Start.TabIndex = 7;
             this.btnEmp1Start.Text = "开始";
             this.btnEmp1Start.UseVisualStyleBackColor = true;
+            this.btnEmp1Start.Click += new System.EventHandler(this.btnEmp1Start_Click);
             // 
             // btnEmp1Pause
             // 
-            this.btnEmp1Pause.Location = new System.Drawing.Point(183, 126);
+            this.btnEmp1Pause.Location = new System.Drawing.Point(168, 16);
             this.btnEmp1Pause.Name = "btnEmp1Pause";
             this.btnEmp1Pause.Size = new System.Drawing.Size(75, 23);
             this.btnEmp1Pause.TabIndex = 7;
             this.btnEmp1Pause.Text = "暂停";
             this.btnEmp1Pause.UseVisualStyleBackColor = true;
+            this.btnEmp1Pause.Click += new System.EventHandler(this.btnEmp1Pause_Click);
             // 
             // btnEmp1Stop
             // 
-            this.btnEmp1Stop.Location = new System.Drawing.Point(264, 126);
+            this.btnEmp1Stop.Location = new System.Drawing.Point(249, 16);
             this.btnEmp1Stop.Name = "btnEmp1Stop";
             this.btnEmp1Stop.Size = new System.Drawing.Size(75, 23);
             this.btnEmp1Stop.TabIndex = 7;
             this.btnEmp1Stop.Text = "停止";
             this.btnEmp1Stop.UseVisualStyleBackColor = true;
+            this.btnEmp1Stop.Click += new System.EventHandler(this.btnEmp1Stop_Click);
             // 
             // btnEmp2Stop
             // 
-            this.btnEmp2Stop.Location = new System.Drawing.Point(641, 126);
+            this.btnEmp2Stop.Location = new System.Drawing.Point(249, 16);
             this.btnEmp2Stop.Name = "btnEmp2Stop";
             this.btnEmp2Stop.Size = new System.Drawing.Size(75, 23);
             this.btnEmp2Stop.TabIndex = 10;
             this.btnEmp2Stop.Text = "停止";
             this.btnEmp2Stop.UseVisualStyleBackColor = true;
+            this.btnEmp2Stop.Click += new System.EventHandler(this.btnEmp2Stop_Click);
             // 
             // btnEmp2Pause
             // 
-            this.btnEmp2Pause.Location = new System.Drawing.Point(560, 126);
+            this.btnEmp2Pause.Location = new System.Drawing.Point(168, 16);
             this.btnEmp2Pause.Name = "btnEmp2Pause";
             this.btnEmp2Pause.Size = new System.Drawing.Size(75, 23);
             this.btnEmp2Pause.TabIndex = 11;
             this.btnEmp2Pause.Text = "暂停";
             this.btnEmp2Pause.UseVisualStyleBackColor = true;
+            this.btnEmp2Pause.Click += new System.EventHandler(this.btnEmp2Pause_Click);
             // 
             // btnEmp2Start
             // 
-            this.btnEmp2Start.Location = new System.Drawing.Point(479, 126);
+            this.btnEmp2Start.Location = new System.Drawing.Point(87, 16);
             this.btnEmp2Start.Name = "btnEmp2Start";
             this.btnEmp2Start.Size = new System.Drawing.Size(75, 23);
             this.btnEmp2Start.TabIndex = 12;
             this.btnEmp2Start.Text = "开始";
             this.btnEmp2Start.UseVisualStyleBackColor = true;
+            this.btnEmp2Start.Click += new System.EventHandler(this.btnEmp2Start_Click);
             // 
             // btnEmp2Conn
             // 
-            this.btnEmp2Conn.Location = new System.Drawing.Point(398, 126);
+            this.btnEmp2Conn.Location = new System.Drawing.Point(6, 16);
             this.btnEmp2Conn.Name = "btnEmp2Conn";
             this.btnEmp2Conn.Size = new System.Drawing.Size(75, 23);
             this.btnEmp2Conn.TabIndex = 9;
@@ -255,47 +256,81 @@
             // 
             // txtEmp2Info
             // 
-            this.txtEmp2Info.Location = new System.Drawing.Point(398, 155);
+            this.txtEmp2Info.Location = new System.Drawing.Point(6, 45);
             this.txtEmp2Info.Multiline = true;
             this.txtEmp2Info.Name = "txtEmp2Info";
             this.txtEmp2Info.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtEmp2Info.Size = new System.Drawing.Size(293, 394);
+            this.txtEmp2Info.Size = new System.Drawing.Size(318, 394);
             this.txtEmp2Info.TabIndex = 8;
             // 
-            // button9
+            // btnDebug
             // 
-            this.button9.Location = new System.Drawing.Point(535, 74);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
-            this.button9.TabIndex = 13;
-            this.button9.Text = "调试";
-            this.button9.UseVisualStyleBackColor = true;
+            this.btnDebug.Location = new System.Drawing.Point(598, 526);
+            this.btnDebug.Name = "btnDebug";
+            this.btnDebug.Size = new System.Drawing.Size(75, 23);
+            this.btnDebug.TabIndex = 13;
+            this.btnDebug.Text = "调试";
+            this.btnDebug.UseVisualStyleBackColor = true;
+            this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
+            // 
+            // btnQuit
+            // 
+            this.btnQuit.Location = new System.Drawing.Point(697, 526);
+            this.btnQuit.Name = "btnQuit";
+            this.btnQuit.Size = new System.Drawing.Size(75, 23);
+            this.btnQuit.TabIndex = 14;
+            this.btnQuit.Text = "退出";
+            this.btnQuit.UseVisualStyleBackColor = true;
+            this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
+            // 
+            // gbEmp1
+            // 
+            this.gbEmp1.Controls.Add(this.txtEmp1Info);
+            this.gbEmp1.Controls.Add(this.btnEmp1Conn);
+            this.gbEmp1.Controls.Add(this.btnEmp1Start);
+            this.gbEmp1.Controls.Add(this.btnEmp1Pause);
+            this.gbEmp1.Controls.Add(this.btnEmp1Stop);
+            this.gbEmp1.Location = new System.Drawing.Point(12, 76);
+            this.gbEmp1.Name = "gbEmp1";
+            this.gbEmp1.Size = new System.Drawing.Size(330, 445);
+            this.gbEmp1.TabIndex = 15;
+            this.gbEmp1.TabStop = false;
+            this.gbEmp1.Text = "设备1";
+            // 
+            // gbEmp2
+            // 
+            this.gbEmp2.Controls.Add(this.txtEmp2Info);
+            this.gbEmp2.Controls.Add(this.btnEmp2Conn);
+            this.gbEmp2.Controls.Add(this.btnEmp2Start);
+            this.gbEmp2.Controls.Add(this.btnEmp2Stop);
+            this.gbEmp2.Controls.Add(this.btnEmp2Pause);
+            this.gbEmp2.Location = new System.Drawing.Point(361, 76);
+            this.gbEmp2.Name = "gbEmp2";
+            this.gbEmp2.Size = new System.Drawing.Size(330, 445);
+            this.gbEmp2.TabIndex = 16;
+            this.gbEmp2.TabStop = false;
+            this.gbEmp2.Text = "设备2";
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.button9);
-            this.Controls.Add(this.btnEmp2Stop);
-            this.Controls.Add(this.btnEmp2Pause);
-            this.Controls.Add(this.btnEmp2Start);
-            this.Controls.Add(this.btnEmp2Conn);
-            this.Controls.Add(this.txtEmp2Info);
-            this.Controls.Add(this.btnEmp1Stop);
-            this.Controls.Add(this.btnEmp1Pause);
-            this.Controls.Add(this.btnEmp1Start);
-            this.Controls.Add(this.btnEmp1Conn);
+            this.Controls.Add(this.gbEmp2);
+            this.Controls.Add(this.gbEmp1);
+            this.Controls.Add(this.btnQuit);
+            this.Controls.Add(this.btnDebug);
             this.Controls.Add(this.gbConnInfo);
-            this.Controls.Add(this.txtEmp1Info);
-            this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.btnOpen);
             this.Name = "FrmMain";
             this.Text = "Packing";
             this.gbConnInfo.ResumeLayout(false);
             this.gbConnInfo.PerformLayout();
+            this.gbEmp1.ResumeLayout(false);
+            this.gbEmp1.PerformLayout();
+            this.gbEmp2.ResumeLayout(false);
+            this.gbEmp2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -303,7 +338,6 @@
 
         private System.Windows.Forms.TextBox txtEmp1Info;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.GroupBox gbConnInfo;
         private System.Windows.Forms.Label label2;
@@ -324,7 +358,10 @@
         private System.Windows.Forms.Button btnEmp2Start;
         private System.Windows.Forms.Button btnEmp2Conn;
         private System.Windows.Forms.TextBox txtEmp2Info;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button btnDebug;
+        private System.Windows.Forms.Button btnQuit;
+        private System.Windows.Forms.GroupBox gbEmp1;
+        private System.Windows.Forms.GroupBox gbEmp2;
     }
 }
 

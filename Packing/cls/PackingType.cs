@@ -41,5 +41,10 @@ namespace Packing
         /// 内容
         /// </summary>
         public List<int> Item { get; set; }
+
+        /// <summary>
+        /// 完成数量
+        /// </summary>
+        public int DoneNumber { get; set; }
     }
 }

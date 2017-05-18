@@ -15,7 +15,15 @@ namespace Packing
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmMain());
+
+            try
+            {
+                Application.Run(new FrmMain());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("程序异常，请重新启动！\r\n 详细信息：" + ex.Message);
+            }
         }
     }
 }
