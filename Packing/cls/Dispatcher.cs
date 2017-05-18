@@ -24,9 +24,21 @@ namespace Packing
             this.axActUtlType = axActUtlType;
         }
 
-        public void Connect()
+        public int Connect()
         {
             ShowInfo("开始连接...", Key);
+
+            //连接成功后，建立timer，发心跳包
+
+            //上位运行选择，on继续
+
+            //读紧急报警	10位
+
+            //读完成总数,是否需要继续执行
+
+            //
+
+            return 0;
         }
     }
 }
