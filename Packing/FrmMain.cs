@@ -15,6 +15,7 @@ namespace Packing
         Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int,AxActUtlTypeLib.AxActUtlType>(2);
         Dictionary<int, Dispatcher> dicDispatcher = new Dictionary<int, Dispatcher>(2);
         Dictionary<int, TextBox> dicInfoBox = new Dictionary<int, TextBox>(2);
+        Dictionary<int, List<PackingType>> dicPacking;
 
         public FrmMain()
         {
@@ -41,9 +42,9 @@ namespace Packing
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 String fName = openFileDialog.FileName;
-                Dictionary<string, List<PackingType>> dicPacking = ExcelHelper.ToDataTable(fName);
+                dicPacking = ExcelHelper.ToDataTable(fName);
 
-                StartWork(dicPacking);
+                //StartWork(dicPacking);
             }
         }
 
@@ -182,6 +183,7 @@ namespace Packing
                 dicDispatcher.Add(key, new Dispatcher(dicAxActUtlType[key]));
                 dicDispatcher[key].ShowInfo = ShowInfo;
                 dicDispatcher[key].Key = key;
+                dicDispatcher[key].ListTask = dicPacking[key];
             }
             dicDispatcher[key].Connect();
         }
@@ -207,3 +209,5 @@ namespace Packing
 //7、暂停（是否需要考虑两个设备不同时暂停）
 //8、继续，重新起线程执行
 //8、执行结束
+
+//http://blog.csdn.net/urovo2017/article/details/71122872

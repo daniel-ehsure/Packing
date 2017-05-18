@@ -17,7 +17,7 @@ namespace Packing
         /// </summary>  
         /// <param name="filePath">文件路径</param>  
         /// <returns></returns>  
-        public static Dictionary<string, List<PackingType>> ToDataTable(string filePath)
+        public static Dictionary<int, List<PackingType>> ToDataTable(string filePath)
         {
             string connStr = "";
             string fileType = System.IO.Path.GetExtension(filePath);

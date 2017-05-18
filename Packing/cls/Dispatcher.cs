@@ -17,6 +17,10 @@ namespace Packing
 
         public int Key { get; set; }
 
+        public int Status { get; set; }
+
+        public List<PackingType> ListTask { get; set; }
+
         private AxActUtlTypeLib.AxActUtlType axActUtlType = null;
         
         public Dispatcher(AxActUtlTypeLib.AxActUtlType axActUtlType)
@@ -39,6 +43,24 @@ namespace Packing
             //
 
             return 0;
+        }
+
+        public int Start()
+        {
+            //判断是否已加载任务
+            if (Status == 0)
+            {
+                doTask();
+            }
+            
+
+
+            return 0;
+        }
+
+        private void doTask()
+        {
+
         }
     }
 }
