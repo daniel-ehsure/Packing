@@ -124,98 +124,6 @@ namespace Packing
         //}
 
 
-        //private void connect()
-        //{
-        //    try
-        //    {
-        //        int iStation = Convert.ToInt32(this.txtStationNo.Text.Trim());
-        //        this.axActUtlType.ActLogicalStationNumber = iStation;
-        //        this.axActUtlType.ActPassword = this.txtPassword.Text.Trim();
-        //        int rtn = this.axActUtlType.Open();
-        //        if (rtn == 0)
-        //        {
-        //            ShowMsg("连接成功！");
-        //            this.txtStationNo.Enabled = false;
-        //            this.txtPassword.Enabled = false;
-        //            this.btnConn.Enabled = false;
-        //        }
-        //        else
-        //        {
-        //            ShowMsg("连接失败");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowMsg(ex.Message);
-        //    }
-        //}
-
-        //private void read()
-        //{
-        //    try
-        //    {
-        //        string strAddr = this.txtAddr.Text.Trim();
-        //        int num = Convert.ToInt32(this.txtNum.Text.Trim());
-        //        short[] arr = new short[num];
-
-        //        int rtn = this.axActUtlType.ReadDeviceBlock2(strAddr, num, out arr[0]);
-        //        if (rtn == 0)
-        //        {
-        //            ShowMsg("读取数据成功！");
-        //            for (int i = 0; i < arr.Length; i++)
-        //            {
-        //                ShowMsg(string.Format("{0:X4}", arr[i]));
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ShowMsg("读取数据失败");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowMsg(ex.Message);
-        //    }
-        //}
-
-        //private void write()
-        //{
-        //    try
-        //    {
-        //        string strAddr = this.txtAddr.Text.Trim();
-        //        string[] strData = this.txtData.Lines;
-        //        int num = strData.Length;
-        //        short[] arr = new short[num];
-        //        for (int i = 0; i < num; i++)
-        //        {
-        //            arr[i] = Convert.ToInt16(strData[i]);
-        //        }
-
-        //        int rtn = this.axActUtlType.WriteDeviceBlock2(strAddr, num, ref arr[0]);
-        //        if (rtn == 0)
-        //        {
-        //            ShowMsg("写入数据成功！");
-        //            this.txtNum.Text = num.ToString();
-        //        }
-        //        else
-        //        {
-        //            ShowMsg("写入数据失败");
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowMsg(ex.Message);
-        //    }
-        //}
-
-        //private void ShowMsg(string msg)
-        //{
-        //    string str = string.Format(DateTime.Now.ToString("HH:mm:ss") + "_" + msg);
-        //    this.richTextBox1.SelectionStart = this.richTextBox1.Text.Length;
-        //    this.richTextBox1.SelectedText += (str + Environment.NewLine);
-        //    this.richTextBox1.ScrollToCaret();
-        //}
 
         private void btnEmp1Conn_Click(object sender, EventArgs e)
         {
@@ -243,7 +151,16 @@ namespace Packing
                 dicDispatcher[key].Key = key;
                 
             }
-            dicDispatcher[key].Connect();
+
+            if (dicDispatcher[key].Connect() == 1)
+            {
+                //处理按钮逻辑，可以开始了    
+            }
+            else
+            {
+                //一种情况有未完成
+                //一种连接失败
+            }
         }
 
         private void ShowInfo(string info, int key)

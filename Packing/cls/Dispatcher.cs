@@ -27,6 +27,11 @@ namespace Packing
         /// </summary>
         public int Status { get; set; }
 
+        /// <summary>
+        /// 当前完成数
+        /// </summary>
+        public int DoneCount { get; set; }
+
         private List<PackingType> listTask;
 
         public List<PackingType> ListTask
@@ -45,6 +50,10 @@ namespace Packing
             this.axActUtlType = axActUtlType;
         }
 
+        /// <summary>
+        /// 连接
+        /// </summary>
+        /// <returns></returns>
         public int Connect()
         {
             ShowInfo("开始连接...", Key);
@@ -61,28 +70,52 @@ namespace Packing
                 else
                 {
                     ShowInfo("连接失败!", Key);
+                    result = 2;
+                    return result;
                 }
             }
             catch (Exception ex)
             {
                 ShowInfo(ex.Message, Key);
+                result = 10;
+                return result;
             }
 
             if (result == 1)
             {
+                //连接成功后，建立timer，发心跳包
                 SendHeartbeat();
 
-
+                //上位运行选择
+                int res = GetHostFlag();
+                if (res == 1)
+                {
+                    //读报警
+                    res = GetWarning();
+                    if (res == 1)
+                    {
+                        //读完成总数
+                        res = GetDoneCount();
+                        if (res == 1)
+                        {
+                            //判断完成数是否为0
+                            result = 1;
+                        }
+                        else
+                        {
+                            result = res;
+                        }
+                    }
+                    else
+                    {
+                        result = res;
+                    }
+                }
+                else
+                {
+                    result = res;
+                }
             }
-            //连接成功后，建立timer，发心跳包
-
-            //上位运行选择，on继续
-
-            //读紧急报警	10位
-
-            //读完成总数,是否需要继续执行
-
-            //
 
             return result;
         }
@@ -90,13 +123,22 @@ namespace Packing
         public int Start()
         {
             //循环任务
-            //判断是否已加载任务
-            if (Status == 0)
+            //起线程去搞
+            for (int i = 0; i < ListTask.Count; i++)
             {
-                DoTask();
+                for (int j = 0; j < ListTask[i].Item.Count; j++)
+                {
+                    if (Status == 0)
+                    {
+                        DoTask();
+                    }
+                }
             }
 
 
+            ShowInfo("执行成功!", Key);
+
+            //任务清零
 
             return 0;
         }
@@ -104,6 +146,10 @@ namespace Packing
         private void DoTask()
         {
             //最小粒度命令
+            /* 1、写命令
+             * 2、开始执行
+             * 3、等待n秒
+             * 4、读4完成数，+1则成功，否则失败*/
         }
 
         public int Pause()
@@ -158,10 +204,97 @@ namespace Packing
             else
             {
                 short data = heartbeatFlag ? (short)1 : (short)0;
-                axActUtlType.WriteDeviceBlock2("M300", 1, ref data);
-                heartbeatFlag = !heartbeatFlag;
-            }
 
+                try
+                {
+                    axActUtlType.WriteDeviceBlock2("M300", 1, ref data);
+                }
+                catch (Exception)
+                {
+                }
+                finally
+                {
+                    heartbeatFlag = !heartbeatFlag;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取上位运行标志
+        /// </summary>
+        /// <returns></returns>
+        private int GetHostFlag()
+        {
+            try
+            {
+                short data;
+                int rtn = axActUtlType.ReadDeviceBlock2("M200", 1, out data);
+                if (rtn == 1)
+                {
+                    //data == 1;
+                    return 1;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 10;
+            }
+        }
+
+        /// <summary>
+        /// 获取报警
+        /// </summary>
+        /// <returns></returns>
+        private int GetWarning()
+        {
+            try
+            {
+                short data;
+                int rtn = axActUtlType.ReadDeviceBlock2("M100", 10, out data);
+                if (rtn == 1)
+                {
+                    //data == 1;
+                    return 1;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 10;
+            }
+        }
+
+        /// <summary>
+        /// 获取完成数
+        /// </summary>
+        /// <returns></returns>
+        private int GetWarning()
+        {
+            try
+            {
+                short data;
+                int rtn = axActUtlType.ReadDeviceBlock2("R200", 10, out data);
+                if (rtn == 1)
+                {
+                    //data == 1;
+                    return 1;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 10;
+            }
         }
     }
 }
