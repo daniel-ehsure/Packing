@@ -19,19 +19,23 @@ namespace Packing
         Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int,AxActUtlTypeLib.AxActUtlType>(2);
         Dictionary<int, Dispatcher> dicDispatcher = new Dictionary<int, Dispatcher>(2);
         Dictionary<int, TextBox> dicInfoBox = new Dictionary<int, TextBox>(2);
+        Dictionary<int, Button> dicBtnConn = new Dictionary<int, Button>(2);
+        Dictionary<int, Button> dicBtnStart = new Dictionary<int, Button>(2);
+        Dictionary<int, Button> dicBtnPause = new Dictionary<int, Button>(2);
+        Dictionary<int, Button> dicBtnStop = new Dictionary<int, Button>(2);
         Dictionary<int, List<PackingType>> dicPacking;
 
         public FrmMain()
         {
             InitializeComponent();
 
-            init();
+            Init();
         }
 
         /// <summary>
         /// 初始化
         /// </summary>
-        private void init()
+        private void Init()
         {
             InitConnInfo();
 
@@ -46,6 +50,36 @@ namespace Packing
 
             dicInfoBox.Add(1, txtEmp1Info);
             dicInfoBox.Add(2, txtEmp2Info);
+
+            InitBtn();
+        }
+
+        /// <summary>
+        /// 初始化按钮
+        /// </summary>
+        private void InitBtn()
+        {
+            dicBtnConn.Add(1, btnEmp1Conn);
+            dicBtnConn.Add(2, btnEmp2Conn);
+
+            dicBtnStart.Add(1, btnEmp1Start);
+            dicBtnStart.Add(2, btnEmp2Start);
+
+            dicBtnPause.Add(1, btnEmp1Pause);
+            dicBtnPause.Add(2, btnEmp2Pause);
+
+            dicBtnStop.Add(1, btnEmp1Stop);
+            dicBtnStop.Add(2, btnEmp2Stop);
+
+            foreach (var key in dicInfoBox.Keys)
+            {
+                dicInfoBox[key].Enabled = true;
+                dicBtnStart[key].Enabled = false;
+                dicBtnPause[key].Enabled = false;
+                dicBtnStop[key].Enabled = false;
+            }
+
+            btnOpen.Enabled = false;
         }
 
         /// <summary>
@@ -140,6 +174,12 @@ namespace Packing
             Connect(2, stationNo, pwd);
         }
 
+        /// <summary>
+        /// 连接
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="stationNo"></param>
+        /// <param name="pwd"></param>
         private void Connect(int key, int stationNo, string pwd)
         {
             if (!dicDispatcher.ContainsKey(key))
@@ -149,20 +189,38 @@ namespace Packing
                 dicDispatcher.Add(key, new Dispatcher(dicAxActUtlType[key]));
                 dicDispatcher[key].ShowInfo = ShowInfo;
                 dicDispatcher[key].Key = key;
-                
             }
 
-            if (dicDispatcher[key].Connect() == 1)
+            int res = dicDispatcher[key].Connect();
+
+            switch (res)
             {
-                //处理按钮逻辑，可以开始了    
-            }
-            else
-            {
-                //一种情况有未完成
-                //一种连接失败
+                case 1://连接成功
+                    dicBtnConn[key].Enabled = false;
+                    btnOpen.Enabled = true;
+                    break;
+                case 2://连接失败
+                    break;
+                case 3://非上位运行
+                    break;
+                case 4://报警
+                    break;
+                case 5://完成总数不为0
+                    //判断是否有未完成任务列表，有，是否继续执行，否，清零
+
+                    break;
+                case 6://读取完成数失败
+                    break;
+                default:
+                    break;
             }
         }
 
+        /// <summary>
+        /// 在消息框里显示
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="key"></param>
         private void ShowInfo(string info, int key)
         {
             string str = string.Format(DateTime.Now.ToString("HH:mm:ss") + "_" + info);

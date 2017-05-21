@@ -15,8 +15,14 @@ namespace Packing
     /// </summary>
     public class Dispatcher
     {
+        /// <summary>
+        /// 在消息框里显示
+        /// </summary>
         public ShowInfo ShowInfo { get; set; }
 
+        /// <summary>
+        /// 设备标识（设备1、设备2）
+        /// </summary>
         public int Key { get; set; }
 
         /// <summary>
@@ -32,17 +38,33 @@ namespace Packing
         /// </summary>
         public int DoneCount { get; set; }
 
+        /// <summary>
+        /// 任务列表
+        /// </summary>
         private List<PackingType> listTask;
 
+        /// <summary>
+        /// 任务列表
+        /// </summary>
         public List<PackingType> ListTask
         {
             get { return listTask; }
             set { listTask = value; OnTaskChanged(); }
         }
 
+        /// <summary>
+        /// PLC连接
+        /// </summary>
         private AxActUtlTypeLib.AxActUtlType axActUtlType = null;
 
+        /// <summary>
+        /// 发送心跳包的timer
+        /// </summary>
         System.Timers.Timer timer;
+
+        /// <summary>
+        /// 心跳包标志
+        /// </summary>
         bool heartbeatFlag = true;
 
         public Dispatcher(AxActUtlTypeLib.AxActUtlType axActUtlType)
@@ -53,7 +75,7 @@ namespace Packing
         /// <summary>
         /// 连接
         /// </summary>
-        /// <returns></returns>
+        /// <returns>1、成功；2、失败；3、非上位运行；4、存在警报；5、完成总数不为0；6、读取完成数失败；10、异常</returns>
         public int Connect()
         {
             ShowInfo("开始连接...", Key);
@@ -88,33 +110,20 @@ namespace Packing
 
                 //上位运行选择
                 int res = GetHostFlag();
+
                 if (res == 1)
                 {
                     //读报警
                     res = GetWarning();
+
                     if (res == 1)
                     {
                         //读完成总数
-                        res = GetDoneCount();
-                        if (res == 1)
-                        {
-                            //判断完成数是否为0
-                            result = 1;
-                        }
-                        else
-                        {
-                            result = res;
-                        }
-                    }
-                    else
-                    {
-                        result = res;
+                        result = GetDoneCount();
                     }
                 }
-                else
-                {
-                    result = res;
-                }
+
+                result = res;
             }
 
             return result;
@@ -134,8 +143,7 @@ namespace Packing
                     }
                 }
             }
-
-
+            
             ShowInfo("执行成功!", Key);
 
             //任务清零
@@ -227,20 +235,28 @@ namespace Packing
         {
             try
             {
-                short data;
-                int rtn = axActUtlType.ReadDeviceBlock2("M200", 1, out data);
-                if (rtn == 1)
+                short[] data;
+                if (Read("M200", 1, out data))
                 {
-                    //data == 1;
-                    return 1;
+                    if (data[0] == 1)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        ShowInfo("非上位运行!", Key);
+                    }
                 }
                 else
                 {
-                    return 2;
+                    ShowInfo("读取上位运行失败!", Key);
                 }
+                
+                return 3;
             }
             catch (Exception ex)
             {
+                ShowInfo(ex.Message, Key);
                 return 10;
             }
         }
@@ -253,20 +269,28 @@ namespace Packing
         {
             try
             {
-                short data;
-                int rtn = axActUtlType.ReadDeviceBlock2("M100", 10, out data);
-                if (rtn == 1)
+                short[] data;
+                if (Read("M100", 11, out data))
                 {
-                    //data == 1;
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        if (data[i] != 0)
+                        {
+                            ShowInfo(Utility.DIC_WARNING[i], Key);
+                            return 4;
+                        }
+                    }
                     return 1;
                 }
                 else
                 {
-                    return 2;
+                    ShowInfo("读取报警失败!", Key);
+                    return 4;
                 }
             }
             catch (Exception ex)
             {
+                ShowInfo(ex.Message, Key);
                 return 10;
             }
         }
@@ -275,26 +299,60 @@ namespace Packing
         /// 获取完成数
         /// </summary>
         /// <returns></returns>
-        private int GetWarning()
+        private int GetDoneCount()
         {
             try
             {
-                short data;
-                int rtn = axActUtlType.ReadDeviceBlock2("R200", 10, out data);
-                if (rtn == 1)
+                short[] data;
+                if (Read("R200", 2, out data))
                 {
-                    //data == 1;
-                    return 1;
+                    DoneCount = data[1];//取低位数据
+                    if (DoneCount == 0)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 5;
+                    }
                 }
                 else
                 {
-                    return 2;
+                    ShowInfo("读取完成数失败!", Key);
+                    return 6;
                 }
             }
             catch (Exception ex)
             {
+                ShowInfo(ex.Message, Key);
                 return 10;
             }
+        }
+
+        /// <summary>
+        /// 读数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="size">长度</param>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public bool Read(string address, int size, out short[] data)
+        {
+            data = new short[size];
+            return axActUtlType.ReadDeviceBlock2(address, size, out data[0]) == 0;
+        }
+
+        /// <summary>
+        /// 写数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="size">长度</param>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public bool Write(string address, int size, out short[] data)
+        {
+            data = new short[size];
+            return axActUtlType.WriteDeviceBlock2(address, size, ref data[0]) == 0;
         }
     }
 }
