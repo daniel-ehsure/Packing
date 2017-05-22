@@ -16,7 +16,9 @@ namespace Packing
     public partial class FrmMain : Form
     {
         const string CONN_INFO_FILE_NAME = "connect.xml";
-        Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int,AxActUtlTypeLib.AxActUtlType>(2);
+        const string TASK_LIST_FILE_NAME1 = "TaskList1.xml";
+        const string TASK_LIST_FILE_NAME2 = "TaskList2.xml";
+        Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int, AxActUtlTypeLib.AxActUtlType>(2);
         Dictionary<int, Dispatcher> dicDispatcher = new Dictionary<int, Dispatcher>(2);
         Dictionary<int, TextBox> dicInfoBox = new Dictionary<int, TextBox>(2);
         Dictionary<int, Button> dicBtnConn = new Dictionary<int, Button>(2);
@@ -24,6 +26,7 @@ namespace Packing
         Dictionary<int, Button> dicBtnPause = new Dictionary<int, Button>(2);
         Dictionary<int, Button> dicBtnStop = new Dictionary<int, Button>(2);
         Dictionary<int, List<PackingType>> dicPacking;
+        Dictionary<int, string> dicTask = new Dictionary<int, string>(2);
 
         public FrmMain()
         {
@@ -50,6 +53,9 @@ namespace Packing
 
             dicInfoBox.Add(1, txtEmp1Info);
             dicInfoBox.Add(2, txtEmp2Info);
+
+            dicTask.Add(1, TASK_LIST_FILE_NAME1);
+            dicTask.Add(21, TASK_LIST_FILE_NAME2);
 
             InitBtn();
         }
@@ -90,11 +96,7 @@ namespace Packing
         private void btnSave_Click(object sender, EventArgs e)
         {
             //xml文件的方式持久化连接信息
-            XmlSerializer fommatter = new XmlSerializer(typeof(List<string>));
-            using (Stream fs = new FileStream(CONN_INFO_FILE_NAME, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                fommatter.Serialize(fs, new List<string>() { txtEmp1No.Text.Trim(), txtEmp1Pwd.Text.Trim(), txtEmp2No.Text.Trim(), txtEmp2Pwd.Text.Trim() });//序列化对象
-            }
+            Utility.WriteFile<List<string>>(CONN_INFO_FILE_NAME, new List<string>() { txtEmp1No.Text.Trim(), txtEmp1Pwd.Text.Trim(), txtEmp2No.Text.Trim(), txtEmp2Pwd.Text.Trim() });//序列化对象
 
             MessageBox.Show("保存成功！");
         }
@@ -105,15 +107,12 @@ namespace Packing
         private void InitConnInfo()
         {
             //从xml文件中加载连接信息
-            XmlSerializer fommatter = new XmlSerializer(typeof(List<string>));
-            using (XmlReader xr = XmlReader.Create(CONN_INFO_FILE_NAME))
-            {
-                List<string> list = (List<string>)fommatter.Deserialize(xr);//反序列化对象 
-                txtEmp1No.Text = list[0];
-                txtEmp1Pwd.Text = list[1];
-                txtEmp2No.Text = list[2];
-                txtEmp2Pwd.Text = list[3];
-            }
+            List<string> list = Utility.RaadFile<List<string>>(CONN_INFO_FILE_NAME);
+
+            txtEmp1No.Text = list[0];
+            txtEmp1Pwd.Text = list[1];
+            txtEmp2No.Text = list[2];
+            txtEmp2Pwd.Text = list[3];
         }
 
         /// <summary>
@@ -134,10 +133,17 @@ namespace Packing
                 String fName = openFileDialog.FileName;
                 dicPacking = ExcelHelper.ToDataTable(fName);
 
-                //调度器获得对应的任务列表
+
+
                 foreach (var key in dicDispatcher.Keys)
                 {
+                    //调度器获得对应的任务列表
                     dicDispatcher[key].ListTask = dicPacking[key];
+                    //存储到文件
+                    Utility.WriteFile<List<PackingType>>(dicTask[key], dicPacking[key]);
+                    //设置按钮
+                    dicBtnStart[key].Enabled = true;
+                    btnOpen.Enabled = false;
                 }
             }
         }
@@ -207,6 +213,22 @@ namespace Packing
                     break;
                 case 5://完成总数不为0
                     //判断是否有未完成任务列表，有，是否继续执行，否，清零
+                    List<PackingType> taskList = Utility.RaadFile<List<PackingType>>(dicTask[key]);
+                    if (taskList.Count > 0)
+                    {
+                        if (MessageBox.Show("有未完成任务，是否继续?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            Start(key);
+                            return;
+                        }
+                    }
+
+                    //不继续执行，完成数清零
+                    if (dicDispatcher[key].SetDoneCount(0) == 0)
+                    {
+                        dicBtnConn[key].Enabled = false;
+                        btnOpen.Enabled = true;
+                    }
 
                     break;
                 case 6://读取完成数失败

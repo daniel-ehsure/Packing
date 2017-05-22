@@ -47,7 +47,7 @@ namespace Packing
                 // 初始化适配器  
                 da = new OleDbDataAdapter();
                 for (int i = 0; i < dtSheetName.Rows.Count; i++)
-                {
+                {                                                                                                                                                                                                                                                       
                     String sheetName = (string)dtSheetName.Rows[i]["TABLE_NAME"];
 
                     if (sheetName.Contains("$") && !sheetName.Replace("'", "").EndsWith("$"))

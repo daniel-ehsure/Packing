@@ -72,6 +72,15 @@ namespace Packing
             this.axActUtlType = axActUtlType;
         }
 
+        private static Dictionary<int, string> dicPlateAddress = new Dictionary<int, string>()
+        {
+            {0,"R300"},
+            {1,"R301"},
+            {2,"R302"},
+            {3,"R303"},
+            {4,"R304"}
+        };
+
         /// <summary>
         /// 连接
         /// </summary>
@@ -129,35 +138,104 @@ namespace Packing
             return result;
         }
 
-        public int Start()
+        /// <summary>
+        /// 设置完成数
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public int SetDoneCount(int num)
         {
-            //循环任务
-            //起线程去搞
-            for (int i = 0; i < ListTask.Count; i++)
+            try
             {
-                for (int j = 0; j < ListTask[i].Item.Count; j++)
+                short[] data = { 0, (short)num };
+                if (Write("R200", 2, out data))
                 {
-                    if (Status == 0)
-                    {
-                        DoTask();
-                    }
+                    return 0;
+                }
+                else
+                {
+                    ShowInfo("设置完成数失败!", Key);
+                    return 1;
                 }
             }
-            
-            ShowInfo("执行成功!", Key);
-
-            //任务清零
-
-            return 0;
+            catch (Exception ex)
+            {
+                ShowInfo(ex.Message, Key);
+                return 10;
+            }
         }
 
-        private void DoTask()
+        /// <summary>
+        /// 开始执行
+        /// </summary>
+        /// <returns></returns>
+        public void Start()
+        {
+            Thread t = new Thread(() =>
+            {
+                for (int i = 0; i < ListTask.Count; i++)
+                {
+                    for (int j = listTask[i].DoneNumber; j < ListTask[i].Item.Count; j++)
+                    {
+                        if (Status == 0)
+                        {
+
+                            DoTask(i, j);
+                        }
+                    }
+                }
+
+                if (Status == 0)
+                {
+                    ShowInfo("全部执行成功!", Key);
+                }
+
+
+                //任务清零
+            });
+        }
+
+        private void DoTask(int i, int j)
         {
             //最小粒度命令
             /* 1、写命令
              * 2、开始执行
              * 3、等待n秒
              * 4、读4完成数，+1则成功，否则失败*/
+            short[] data = new short[1];
+            bool res = true;
+
+            foreach (var key in dicPlateAddress.Keys)
+            {
+                if (res)
+                {
+                    if (key == i)
+                    {
+                        data[0] = (short)listTask[i].Item[j];
+                    }
+                    else
+                    {
+                        data[0] = 0;
+                    }
+
+                    try
+                    {
+                        res = Write(dicPlateAddress[key], 1, out data);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowInfo(ex.Message, Key);
+                        Status = 2;
+                        return;
+                    }
+                }
+                else
+                {
+                    ShowInfo("执行错误!", Key);
+                    Status = 2;
+                    return;
+                }
+            }
         }
 
         public int Pause()
@@ -251,7 +329,7 @@ namespace Packing
                 {
                     ShowInfo("读取上位运行失败!", Key);
                 }
-                
+
                 return 3;
             }
             catch (Exception ex)
