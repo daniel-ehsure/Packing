@@ -72,6 +72,9 @@ namespace Packing
             this.axActUtlType = axActUtlType;
         }
 
+        /// <summary>
+        /// 阵盘地址
+        /// </summary>
         private static Dictionary<int, string> dicPlateAddress = new Dictionary<int, string>()
         {
             {0,"R300"},
@@ -80,6 +83,9 @@ namespace Packing
             {3,"R303"},
             {4,"R304"}
         };
+
+        private const int MAX_READ_TIMES = 3;
+        private const int READ_INTERVAL = 3000;//毫秒
 
         /// <summary>
         /// 连接
@@ -171,15 +177,17 @@ namespace Packing
         /// <returns></returns>
         public void Start()
         {
+            Status = 0;
+
             Thread t = new Thread(() =>
             {
                 for (int i = 0; i < ListTask.Count; i++)
                 {
+                    //不执行已经完成的
                     for (int j = listTask[i].DoneNumber; j < ListTask[i].Item.Count; j++)
                     {
                         if (Status == 0)
                         {
-
                             DoTask(i, j);
                         }
                     }
@@ -190,11 +198,15 @@ namespace Packing
                     ShowInfo("全部执行成功!", Key);
                 }
 
-
-                //任务清零
+                //todo:任务清零
             });
         }
 
+        /// <summary>
+        /// 执行任务
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
         private void DoTask(int i, int j)
         {
             //最小粒度命令
@@ -210,7 +222,7 @@ namespace Packing
                 if (res)
                 {
                     if (key == i)
-                    {
+                    {//确定要写入的振盘
                         data[0] = (short)listTask[i].Item[j];
                     }
                     else
@@ -236,6 +248,49 @@ namespace Packing
                     return;
                 }
             }
+
+            if (res)
+            {//开始执行
+                data[0] = 1;
+                try
+                {
+                    res = Write("R305", 1, out data);
+
+                    if (res)
+                    {//全部写入正确，开始读取完成数
+                        int times = 0;
+                        int currentNum = DoneCount;
+
+                        while (times < MAX_READ_TIMES)
+                        {
+                            Thread.Sleep(READ_INTERVAL);
+                            times++;
+
+                            int result = GetDoneCount();
+
+                            if (currentNum + 1 == DoneCount)
+                            {//完成数加一，说明plc正确执行
+                                //打印
+                                string bar = ListTask[i].ImageNo + ListTask[i].CertificateNo;
+                                string name = string.Format("图号：{0}\r\n合格证号：{1}\r\n名称：{2}\r\n数量：{3}\r\n", ListTask[i].ImageNo, ListTask[i].CertificateNo, ListTask[i].Name, ListTask[i].Item[j]);
+                                Barcode.Print(bar, name);
+                                //更新任务完成数
+                                ListTask[i].DoneNumber = j + 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowInfo(ex.Message, Key);
+                    Status = 2;
+                    return;
+                }
+            }
+
+            ShowInfo("执行错误!", Key);
+            Status = 2;
         }
 
         public int Pause()

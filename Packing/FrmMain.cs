@@ -148,23 +148,6 @@ namespace Packing
             }
         }
 
-        ///// <summary>
-        ///// 开始工作
-        ///// </summary>
-        ///// <param name="dicPacking">包装信息</param>
-        //private void StartWork(Dictionary<string, List<PackingType>> dicPacking)
-        //{
-        //    Plc plc = new Plc(new Linker(), txtEmp1Info);
-
-        //    foreach (var packerNo in dicPacking.Keys)
-        //    {
-        //        Thread t = new Thread(new ParameterizedThreadStart(plc.execute));
-        //        t.Start(dicPacking[packerNo]);
-        //    }
-        //}
-
-
-
         private void btnEmp1Conn_Click(object sender, EventArgs e)
         {
             int stationNo = Convert.ToInt32(txtEmp1No.Text.Trim());

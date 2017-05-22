@@ -9,20 +9,24 @@ namespace Packing
 {
     public class Barcode
     {
+        static object o = new object();
         static PrintDocument pd = new PrintDocument();
 
         public static void Print(string bar, string name)
         {
-            Image printImage = getPrintImage(bar, name, 800, 600);
-            
-            pd.PrintPage += (sender1, e1) =>
+            lock (o)
             {
-                using (Graphics g = e1.Graphics)
+                Image printImage = getPrintImage(bar, name, 800, 600);
+
+                pd.PrintPage += (sender1, e1) =>
                 {
-                    g.DrawImage(printImage, 0, 0);
-                }
-            };
-            pd.Print();
+                    using (Graphics g = e1.Graphics)
+                    {
+                        g.DrawImage(printImage, 0, 0);
+                    }
+                };
+                pd.Print();
+            }
         }
 
         /// <summary>
@@ -40,8 +44,8 @@ namespace Packing
             int fontSize = 15;
             Font fon = new System.Drawing.Font("宋体", fontSize);
             Code128 code = new Code128();
-            code.Height = 80;
-            code.Magnify = 2;
+            code.Height = 40;
+            code.Magnify = 0;
             code.ValueFont = fon;
             Image iim = code.GetCodeImage(barcode, Code128.Encode.Code128B);
 
