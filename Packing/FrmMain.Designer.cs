@@ -210,7 +210,7 @@
             this.btnEmp1Stop.Name = "btnEmp1Stop";
             this.btnEmp1Stop.Size = new System.Drawing.Size(75, 23);
             this.btnEmp1Stop.TabIndex = 7;
-            this.btnEmp1Stop.Text = "停止";
+            this.btnEmp1Stop.Text = "断开";
             this.btnEmp1Stop.UseVisualStyleBackColor = true;
             this.btnEmp1Stop.Click += new System.EventHandler(this.btnEmp1Stop_Click);
             // 
@@ -220,7 +220,7 @@
             this.btnEmp2Stop.Name = "btnEmp2Stop";
             this.btnEmp2Stop.Size = new System.Drawing.Size(75, 23);
             this.btnEmp2Stop.TabIndex = 10;
-            this.btnEmp2Stop.Text = "停止";
+            this.btnEmp2Stop.Text = "断开";
             this.btnEmp2Stop.UseVisualStyleBackColor = true;
             this.btnEmp2Stop.Click += new System.EventHandler(this.btnEmp2Stop_Click);
             // 

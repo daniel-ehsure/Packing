@@ -45,7 +45,7 @@ namespace Packing
             Font fon = new System.Drawing.Font("宋体", fontSize);
             Code128 code = new Code128();
             code.Height = 40;
-            code.Magnify = 0;
+            code.Magnify = 0;//这里可以控制条码的宽度
             code.ValueFont = fon;
             Image iim = code.GetCodeImage(barcode, Code128.Encode.Code128B);
 
