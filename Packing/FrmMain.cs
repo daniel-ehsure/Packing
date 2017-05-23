@@ -15,9 +15,12 @@ namespace Packing
 {
     public partial class FrmMain : Form
     {
+        //连接信息存储位置
         const string CONN_INFO_FILE_NAME = "connect.xml";
+        //任务信息存储位置
         const string TASK_LIST_FILE_NAME1 = "TaskList1.xml";
         const string TASK_LIST_FILE_NAME2 = "TaskList2.xml";
+        //分别存储两个plc相关的各种字典
         Dictionary<int, AxActUtlTypeLib.AxActUtlType> dicAxActUtlType = new Dictionary<int, AxActUtlTypeLib.AxActUtlType>(2);
         Dictionary<int, Dispatcher> dicDispatcher = new Dictionary<int, Dispatcher>(2);
         Dictionary<int, TextBox> dicInfoBox = new Dictionary<int, TextBox>(2);
@@ -76,16 +79,6 @@ namespace Packing
 
             dicBtnStop.Add(1, btnEmp1Stop);
             dicBtnStop.Add(2, btnEmp2Stop);
-
-            foreach (var key in dicInfoBox.Keys)
-            {
-                dicInfoBox[key].Enabled = true;
-                dicBtnStart[key].Enabled = false;
-                dicBtnPause[key].Enabled = false;
-                dicBtnStop[key].Enabled = false;
-            }
-
-            btnOpen.Enabled = false;
         }
 
         /// <summary>
@@ -123,6 +116,23 @@ namespace Packing
         /// <param name="e"></param>
         private void btnOpen_Click(object sender, EventArgs e)
         {
+            if (dicDispatcher.Count == 0)
+            {
+                MessageBox.Show("请先连接设备！");
+                return;
+            }
+            else
+            {
+                foreach (var key in dicDispatcher.Keys)
+                {
+                    if (dicDispatcher[key].Status != 1)
+                    {
+                        MessageBox.Show("设备连接成功才能加载任务！");
+                        return;
+                    }
+                }
+            }
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "03excel|*.xls|07excel|*.xlsx";
             openFileDialog.RestoreDirectory = true;
@@ -141,9 +151,6 @@ namespace Packing
                     dicDispatcher[key].ListTask = dicPacking[key];
                     //存储到文件
                     Utility.WriteFile<List<PackingType>>(dicTask[key], dicPacking[key]);
-                    //设置按钮
-                    dicBtnStart[key].Enabled = true;
-                    btnOpen.Enabled = false;
                 }
             }
         }
@@ -178,6 +185,21 @@ namespace Packing
                 dicDispatcher.Add(key, new Dispatcher(dicAxActUtlType[key]));
                 dicDispatcher[key].ShowInfo = ShowInfo;
                 dicDispatcher[key].Key = key;
+                dicDispatcher[key].Status = 0;
+            }
+
+            //清空任务列表
+            dicDispatcher[key].ListTask = null;
+
+            if (dicDispatcher[key].Status == 3)
+            {
+                //重新连接
+                dicDispatcher[key].Close();
+                dicDispatcher[key].Status = 0;
+            }
+            else if (dicDispatcher[key].Status != 0)
+            {
+                MessageBox.Show("当前状态不能重新连接");
             }
 
             int res = dicDispatcher[key].Connect();
@@ -185,14 +207,15 @@ namespace Packing
             switch (res)
             {
                 case 1://连接成功
-                    dicBtnConn[key].Enabled = false;
-                    btnOpen.Enabled = true;
+                    dicDispatcher[key].Status = 1;
                     break;
                 case 2://连接失败
                     break;
                 case 3://非上位运行
+                    dicDispatcher[key].Status = 2;
                     break;
                 case 4://报警
+                    dicDispatcher[key].Status = 2;
                     break;
                 case 5://完成总数不为0
                     //判断是否有未完成任务列表，有，是否继续执行，否，清零
@@ -215,6 +238,7 @@ namespace Packing
 
                     break;
                 case 6://读取完成数失败
+                    dicDispatcher[key].Status = 2;
                     break;
                 default:
                     break;
@@ -244,9 +268,20 @@ namespace Packing
             Start(2);
         }
 
+        /// <summary>
+        /// 开始
+        /// </summary>
+        /// <param name="key"></param>
         private void Start(int key)
         {
-            dicDispatcher[key].Start();
+            if (dicDispatcher[key].Status==1||dicDispatcher[key].Status==5)
+            {
+                dicDispatcher[key].Start();
+            }
+            else
+            {
+                MessageBox.Show("连接成功或暂停时才能开始！");
+            }
         }
 
         private void btnEmp1Pause_Click(object sender, EventArgs e)
@@ -259,9 +294,20 @@ namespace Packing
             Pause(2);
         }
 
+        /// <summary>
+        /// 暂停
+        /// </summary>
+        /// <param name="key"></param>
         private void Pause(int key)
         {
-            dicDispatcher[key].Pause();
+            if (dicDispatcher[key].Status == 3)
+            {
+                dicDispatcher[key].Pause();
+            }
+            else
+            {
+                MessageBox.Show("执行时才能暂停！");
+            }
         }
 
         private void btnEmp1Stop_Click(object sender, EventArgs e)
@@ -274,9 +320,20 @@ namespace Packing
             Stop(2);
         }
 
+        /// <summary>
+        /// 断开连接
+        /// </summary>
+        /// <param name="key"></param>
         private void Stop(int key)
         {
-            dicDispatcher[key].Stop();
+            if (dicDispatcher[key].Status == 0 || dicDispatcher[key].Status == 3 || dicDispatcher[key].Status == 4)
+            {
+                MessageBox.Show("连接成功或暂停时才能开始！");
+            }
+            else
+            {
+                dicDispatcher[key].Close(); 
+            }
         }
 
         private void btnDebug_Click(object sender, EventArgs e)
@@ -287,6 +344,16 @@ namespace Packing
         private void btnQuit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void btnEmp1Claer_Click(object sender, EventArgs e)
+        {
+            txtEmp1Info.Clear();
+        }
+
+        private void btnEmp2Claer_Click(object sender, EventArgs e)
+        {
+            txtEmp2Info.Clear();
         }
     }
 }

@@ -29,7 +29,11 @@ namespace Packing
         /// 状态
         /// 0：未连接
         /// 1：连接成功
-        /// 10：停止
+        /// 2：连接成功，状态异常
+        /// 3：正在执行
+        /// 4：正在暂停
+        /// 5：暂停
+        /// 6：完成
         /// </summary>
         public int Status { get; set; }
 
@@ -106,6 +110,7 @@ namespace Packing
                 }
                 else
                 {
+                    Status = 2;
                     ShowInfo("连接失败!", Key);
                     result = 2;
                     return result;
@@ -113,6 +118,7 @@ namespace Packing
             }
             catch (Exception ex)
             {
+                Status = 2;
                 ShowInfo(ex.Message, Key);
                 result = 10;
                 return result;
@@ -177,7 +183,8 @@ namespace Packing
         /// <returns></returns>
         public void Start()
         {
-            Status = 0;
+            ShowInfo("开始执行!", Key);
+            Status = 3;
 
             Thread t = new Thread(() =>
             {
@@ -186,19 +193,26 @@ namespace Packing
                     //不执行已经完成的
                     for (int j = listTask[i].DoneNumber; j < ListTask[i].Item.Count; j++)
                     {
-                        if (Status == 0)
+                        if (Status == 3)
                         {
                             DoTask(i, j);
+                        }
+                        else
+                        {//暂停
+                            ShowInfo("暂停!", Key);
+                            Status = 5;
                         }
                     }
                 }
 
-                if (Status == 0)
+                if (Status == 3)
                 {
+                    Status = 6;
                     ShowInfo("全部执行成功!", Key);
                 }
 
-                //todo:任务清零
+                //任务清零
+                ListTask = null;
             });
         }
 
@@ -216,6 +230,8 @@ namespace Packing
              * 4、读4完成数，+1则成功，否则失败*/
             short[] data = new short[1];
             bool res = true;
+
+            ShowInfo("开始执行任务：" + listTask[i].Name + " 数量：" + ListTask[i].Item[j], Key);
 
             foreach (var key in dicPlateAddress.Keys)
             {
@@ -276,6 +292,7 @@ namespace Packing
                                 Barcode.Print(bar, name);
                                 //更新任务完成数
                                 ListTask[i].DoneNumber = j + 1;
+                                ShowInfo("任务执行成功！", Key);
                                 break;
                             }
                         }
@@ -284,25 +301,31 @@ namespace Packing
                 catch (Exception ex)
                 {
                     ShowInfo(ex.Message, Key);
-                    Status = 2;
+                    Status = 5;
                     return;
                 }
             }
 
             ShowInfo("执行错误!", Key);
-            Status = 2;
+            Status = 5;
         }
 
         public int Pause()
         {
-            Status = 1;
+            ShowInfo("正在暂停...", Key);
+            Status = 4;
             return 0;
         }
 
-        public int Stop()
+        /// <summary>
+        /// 断开
+        /// </summary>
+        /// <returns></returns>
+        public int Close()
         {
-            Status = 2;
-            //清理任务，准备下次执行
+            ShowInfo("断开成功!", Key);
+            axActUtlType.Close();
+            Status = 0;
 
             return 0;
         }

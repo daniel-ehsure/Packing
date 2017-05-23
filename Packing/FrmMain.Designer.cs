@@ -54,6 +54,8 @@
             this.btnQuit = new System.Windows.Forms.Button();
             this.gbEmp1 = new System.Windows.Forms.GroupBox();
             this.gbEmp2 = new System.Windows.Forms.GroupBox();
+            this.btnEmp1Claer = new System.Windows.Forms.Button();
+            this.btnEmp2Claer = new System.Windows.Forms.Button();
             this.gbConnInfo.SuspendLayout();
             this.gbEmp1.SuspendLayout();
             this.gbEmp2.SuspendLayout();
@@ -78,7 +80,7 @@
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 3;
-            this.btnOpen.Text = "打开表格";
+            this.btnOpen.Text = "加载任务";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
@@ -178,7 +180,7 @@
             // 
             this.btnEmp1Conn.Location = new System.Drawing.Point(6, 16);
             this.btnEmp1Conn.Name = "btnEmp1Conn";
-            this.btnEmp1Conn.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp1Conn.Size = new System.Drawing.Size(55, 23);
             this.btnEmp1Conn.TabIndex = 7;
             this.btnEmp1Conn.Text = "连接";
             this.btnEmp1Conn.UseVisualStyleBackColor = true;
@@ -186,9 +188,9 @@
             // 
             // btnEmp1Start
             // 
-            this.btnEmp1Start.Location = new System.Drawing.Point(87, 16);
+            this.btnEmp1Start.Location = new System.Drawing.Point(67, 16);
             this.btnEmp1Start.Name = "btnEmp1Start";
-            this.btnEmp1Start.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp1Start.Size = new System.Drawing.Size(55, 23);
             this.btnEmp1Start.TabIndex = 7;
             this.btnEmp1Start.Text = "开始";
             this.btnEmp1Start.UseVisualStyleBackColor = true;
@@ -196,9 +198,9 @@
             // 
             // btnEmp1Pause
             // 
-            this.btnEmp1Pause.Location = new System.Drawing.Point(168, 16);
+            this.btnEmp1Pause.Location = new System.Drawing.Point(128, 16);
             this.btnEmp1Pause.Name = "btnEmp1Pause";
-            this.btnEmp1Pause.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp1Pause.Size = new System.Drawing.Size(55, 23);
             this.btnEmp1Pause.TabIndex = 7;
             this.btnEmp1Pause.Text = "暂停";
             this.btnEmp1Pause.UseVisualStyleBackColor = true;
@@ -206,9 +208,9 @@
             // 
             // btnEmp1Stop
             // 
-            this.btnEmp1Stop.Location = new System.Drawing.Point(249, 16);
+            this.btnEmp1Stop.Location = new System.Drawing.Point(189, 16);
             this.btnEmp1Stop.Name = "btnEmp1Stop";
-            this.btnEmp1Stop.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp1Stop.Size = new System.Drawing.Size(55, 23);
             this.btnEmp1Stop.TabIndex = 7;
             this.btnEmp1Stop.Text = "断开";
             this.btnEmp1Stop.UseVisualStyleBackColor = true;
@@ -216,9 +218,9 @@
             // 
             // btnEmp2Stop
             // 
-            this.btnEmp2Stop.Location = new System.Drawing.Point(249, 16);
+            this.btnEmp2Stop.Location = new System.Drawing.Point(189, 16);
             this.btnEmp2Stop.Name = "btnEmp2Stop";
-            this.btnEmp2Stop.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp2Stop.Size = new System.Drawing.Size(55, 23);
             this.btnEmp2Stop.TabIndex = 10;
             this.btnEmp2Stop.Text = "断开";
             this.btnEmp2Stop.UseVisualStyleBackColor = true;
@@ -226,9 +228,9 @@
             // 
             // btnEmp2Pause
             // 
-            this.btnEmp2Pause.Location = new System.Drawing.Point(168, 16);
+            this.btnEmp2Pause.Location = new System.Drawing.Point(128, 16);
             this.btnEmp2Pause.Name = "btnEmp2Pause";
-            this.btnEmp2Pause.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp2Pause.Size = new System.Drawing.Size(55, 23);
             this.btnEmp2Pause.TabIndex = 11;
             this.btnEmp2Pause.Text = "暂停";
             this.btnEmp2Pause.UseVisualStyleBackColor = true;
@@ -236,9 +238,9 @@
             // 
             // btnEmp2Start
             // 
-            this.btnEmp2Start.Location = new System.Drawing.Point(87, 16);
+            this.btnEmp2Start.Location = new System.Drawing.Point(67, 16);
             this.btnEmp2Start.Name = "btnEmp2Start";
-            this.btnEmp2Start.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp2Start.Size = new System.Drawing.Size(55, 23);
             this.btnEmp2Start.TabIndex = 12;
             this.btnEmp2Start.Text = "开始";
             this.btnEmp2Start.UseVisualStyleBackColor = true;
@@ -248,7 +250,7 @@
             // 
             this.btnEmp2Conn.Location = new System.Drawing.Point(6, 16);
             this.btnEmp2Conn.Name = "btnEmp2Conn";
-            this.btnEmp2Conn.Size = new System.Drawing.Size(75, 23);
+            this.btnEmp2Conn.Size = new System.Drawing.Size(55, 23);
             this.btnEmp2Conn.TabIndex = 9;
             this.btnEmp2Conn.Text = "连接";
             this.btnEmp2Conn.UseVisualStyleBackColor = true;
@@ -285,6 +287,7 @@
             // 
             // gbEmp1
             // 
+            this.gbEmp1.Controls.Add(this.btnEmp1Claer);
             this.gbEmp1.Controls.Add(this.txtEmp1Info);
             this.gbEmp1.Controls.Add(this.btnEmp1Conn);
             this.gbEmp1.Controls.Add(this.btnEmp1Start);
@@ -299,6 +302,7 @@
             // 
             // gbEmp2
             // 
+            this.gbEmp2.Controls.Add(this.btnEmp2Claer);
             this.gbEmp2.Controls.Add(this.txtEmp2Info);
             this.gbEmp2.Controls.Add(this.btnEmp2Conn);
             this.gbEmp2.Controls.Add(this.btnEmp2Start);
@@ -310,6 +314,26 @@
             this.gbEmp2.TabIndex = 16;
             this.gbEmp2.TabStop = false;
             this.gbEmp2.Text = "设备2";
+            // 
+            // btnEmp1Claer
+            // 
+            this.btnEmp1Claer.Location = new System.Drawing.Point(250, 16);
+            this.btnEmp1Claer.Name = "btnEmp1Claer";
+            this.btnEmp1Claer.Size = new System.Drawing.Size(55, 23);
+            this.btnEmp1Claer.TabIndex = 8;
+            this.btnEmp1Claer.Text = "清除";
+            this.btnEmp1Claer.UseVisualStyleBackColor = true;
+            this.btnEmp1Claer.Click += new System.EventHandler(this.btnEmp1Claer_Click);
+            // 
+            // btnEmp2Claer
+            // 
+            this.btnEmp2Claer.Location = new System.Drawing.Point(250, 16);
+            this.btnEmp2Claer.Name = "btnEmp2Claer";
+            this.btnEmp2Claer.Size = new System.Drawing.Size(55, 23);
+            this.btnEmp2Claer.TabIndex = 9;
+            this.btnEmp2Claer.Text = "清除";
+            this.btnEmp2Claer.UseVisualStyleBackColor = true;
+            this.btnEmp2Claer.Click += new System.EventHandler(this.btnEmp2Claer_Click);
             // 
             // FrmMain
             // 
@@ -362,6 +386,8 @@
         private System.Windows.Forms.Button btnQuit;
         private System.Windows.Forms.GroupBox gbEmp1;
         private System.Windows.Forms.GroupBox gbEmp2;
+        private System.Windows.Forms.Button btnEmp1Claer;
+        private System.Windows.Forms.Button btnEmp2Claer;
     }
 }
 

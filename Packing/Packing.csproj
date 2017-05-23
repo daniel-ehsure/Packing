@@ -70,9 +70,7 @@
     <Compile Include="cls\Code128.cs" />
     <Compile Include="cls\Dispatcher.cs" />
     <Compile Include="cls\ExcelHelper.cs" />
-    <Compile Include="cls\Linker.cs" />
     <Compile Include="cls\PackingType.cs" />
-    <Compile Include="cls\Plc.cs" />
     <Compile Include="cls\Utility.cs" />
     <Compile Include="FrmDebug.cs">
       <SubType>Form</SubType>
