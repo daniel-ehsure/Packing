@@ -7,25 +7,35 @@ using System.Drawing.Printing;
 
 namespace Packing
 {
+    /// <summary>
+    /// 条码打印
+    /// </summary>
     public class Barcode
     {
         static object o = new object();
         static PrintDocument pd = new PrintDocument();
+        static Image printImage;
+
+        static Barcode()
+        {
+            pd.PrintPage += new PrintPageEventHandler(pd_PrintPage);
+        }
 
         public static void Print(string bar, string name)
         {
             lock (o)
             {
-                Image printImage = getPrintImage(bar, name, 800, 600);
-
-                pd.PrintPage += (sender1, e1) =>
-                {
-                    using (Graphics g = e1.Graphics)
-                    {
-                        g.DrawImage(printImage, 0, 0);
-                    }
-                };
+                //整个图片的大小
+                printImage = getPrintImage(bar, name, 550, 200);
                 pd.Print();
+            }
+        }
+
+        static void pd_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            using (Graphics g = e.Graphics)
+            {
+                g.DrawImage(printImage, 0, 0);
             }
         }
 
@@ -44,7 +54,7 @@ namespace Packing
             int fontSize = 15;
             Font fon = new System.Drawing.Font("宋体", fontSize);
             Code128 code = new Code128();
-            code.Height = 40;
+            code.Height = 40;//这里可以控制条码的高度
             code.Magnify = 0;//这里可以控制条码的宽度
             code.ValueFont = fon;
             Image iim = code.GetCodeImage(barcode, Code128.Encode.Code128B);
@@ -56,13 +66,9 @@ namespace Packing
             SolidBrush brush = new SolidBrush(Color.Black);
             g.DrawRectangle(pen, 5, 5, w - 10, h - 10);
 
-            int length = name.Length / 2;
-            int stringW = (length + 2) * fontSize;
-            int xs = (w - 10 - stringW) / 2;
-            int xy = (h - 10 - fontSize * 2 - iim.Height) / 2;
-            g.DrawString(name, fon, brush, xs, 10);
-            int xi = (w - 10 - iim.Width) / 2;
-            g.DrawImage(iim, xi, xy + fontSize * 2 * 2);
+            g.DrawImage(iim, 10, 10);//从10，10开始打印条码
+
+            g.DrawString(name, fon, brush, 10, iim.Height + 10);//在条码下面打印内容
 
             return im;
         }
